@@ -1,0 +1,17 @@
+<p id="notice"><%= notice %></p>
+
+<div id="schreiben" class="tab-pane fade">
+  <h3></h3>
+  <p><%= form_tag('/se' ,  multipart: true ) do %>
+
+        <%= file_field_tag 'pptx', :accept => 'application/vnd.openxmlformats-officedocument.presentationml.presentation' %>
+        <%= submit_tag('Abschicken') %>
+    <% end %>
+</div>
+<% if not @slides.nil? %>
+  <% @slides.each do |i| %>
+      <div>
+          <%= i[0] %> : <%= i[1] %>
+      </div>
+  <% end %>
+<% end %>

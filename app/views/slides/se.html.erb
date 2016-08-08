@@ -1,0 +1,15 @@
+<%= link_to 'Zurück', :back %>
+<% @content.each do |f| %>
+  <div>
+    <p>Slide-No: <%= f[1][:slide_number] %></p>
+    <p>Titel: <%= f[1][:slide_title] %></p>
+    <p>Kommentar: <%= f[1][:slide_comment] %></p>
+    <p>Notes: <%= f[1][:slide_notes] %></p>
+    <% f[1][:links].each do |key, value| %>
+        <p>Link-Anzeigename: <%= value %></p>
+        <p>Link-Ziel: <%= key %></p>
+    <% end %>
+    <hr>
+  </div>
+<% end %>
+<%= link_to 'Zurück', :back %>
