@@ -1,0 +1,70 @@
+10m0(Build:2)
+Element does not exist and cannot be created: "tableStyles.xml.rels"
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+
+Rethrow
+/build/libreoffice-OypX7x/libreoffice-5.1.4/sfx2/source/doc/docfile.cxx:2477: 
+
+Rethrow
+Element does not exist and cannot be created: "default.xml"
+Rethrow
+Element does not exist and cannot be created: "sc_imagelist.xml"
+Rethrow
+/build/libreoffice-OypX7x/libreoffice-5.1.4/sfx2/source/doc/sfxbasemodel.cxx:1698: storeToURL
+/build/libreoffice-OypX7x/libreoffice-5.1.4/sfx2/source/doc/objstor.cxx:1116: Begin
+/build/libreoffice-OypX7x/libreoffice-5.1.4/sfx2/source/doc/objstor.cxx:1317: SaveAs/Export
+/build/libreoffice-OypX7x/libreoffice-5.1.4/sfx2/source/doc/sfxbasemodel.cxx:3122: Storing failed!

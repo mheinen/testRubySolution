@@ -21,8 +21,8 @@ class Slide
     parse_slide_notes
     parse_relation
     fix_libre
-  end
 
+  end
 
   # Preprocessing of the xml to make sure, that the pdf looks nice when generated with Libre
   def fix_libre

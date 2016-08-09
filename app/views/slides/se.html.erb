@@ -9,6 +9,7 @@
         <p>Link-Anzeigename: <%= value %></p>
         <p>Link-Ziel: <%= key %></p>
     <% end %>
+    <p>Narration: <%= audio_tag(f[1][:narration], controls: true) %></p>
     <hr>
   </div>
 <% end %>

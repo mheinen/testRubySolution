@@ -11,7 +11,7 @@ class SlidesController < ActionController::Base
     @content = Hash.new(0)
 
     # Original filename of the uploaded pptx
-    filename = params[:pptx].original_filename
+    $filename = params[:pptx].original_filename
 
     # Temporary file path of the uploaded pptx
     file_path = params[:pptx].path
@@ -23,13 +23,14 @@ class SlidesController < ActionController::Base
     presentation.slides.each do |slide|
       # Store information inside the hash for the View
       @content.store(slide.slide_number , {slide_number: slide.slide_number, slide_title: slide.title, slide_comment: slide.comment,
-                                           slide_notes: slide.notes, links: slide.links})
+                                           slide_notes: slide.notes, links: slide.links, narration: presentation.open_narration(slide.slide_number)})
+
     end
 
     # Preprocessing of the pptx
     presentation.rebuild_pptx
 
-    presentation.generate_pdf(filename)
+    presentation.generate_pdf($filename)
  #   presentation.generate_images(filename)
 
 
