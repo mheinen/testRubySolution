@@ -1,4 +1,10 @@
 <%= link_to 'Zurück', :back %>
+<p>
+  <% if @pdf.present? %>
+      <%= link_to 'Fertige PDF öffnen', slides_download_pdf_url(pdf: @pdf), target: '_blank' %>
+  <% end %>
+</p>
+
 <% @content.each do |f| %>
   <div>
     <p>Slide-No: <%= f[1][:slide_number] %></p>
@@ -9,7 +15,9 @@
         <p>Link-Anzeigename: <%= value %></p>
         <p>Link-Ziel: <%= key %></p>
     <% end %>
-    <p>Narration: <%= audio_tag(f[1][:narration], controls: true) %></p>
+    <% if f[1][:with_narration] %>
+      <p>Narration: <%= audio_tag(f[1][:narration], controls: true) %></p>
+    <% end %>
     <hr>
   </div>
 <% end %>

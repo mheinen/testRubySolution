@@ -1,3 +1,5 @@
+require 'zip/filesystem'
+require 'nokogiri'
 class Presentation
 
   attr_reader :files, :narration
@@ -13,12 +15,20 @@ class Presentation
     narration_present?
   end
 
+  # True if presentation contains Narration
   def narration_present?
     content_types_xml = nil
     pres_doc = @files.file.open '[Content_Types].xml' rescue nil
     content_types_xml = Nokogiri::XML::Document.parse(pres_doc) if pres_doc
     content = content_types_xml.xpath('//@Extension')
-    @narration = content.to_s.include?('m4a')
+    if content.to_s.include?('m4a')
+      @type = 'm4a'
+      @narration = true
+    end
+    if content.to_s.include?('wav')
+      @type = 'wav'
+      @narration = true
+    end
   end
 
   # Creates slides out of the corresponding files.
@@ -32,10 +42,18 @@ class Presentation
     @slides.sort{|a,b| a.slide_num <=> b.slide_num}
   end
 
+  # Creates a physical copy of the narration file and returns the file path in the asset pipeline
   def open_narration(slide_no)
+    if @type == 'm4a'
      @files.extract("ppt/media/media#{slide_no}.m4a", "#{Rails.root}/public/audios/#{$filename}media#{slide_no}.m4a") rescue
-  #   "media#{slide_no}.m4a"
      $filename+'media'+slide_no.to_s+'.m4a'
+    end
+    if @type == 'wav'
+
+      @files.extract("ppt/media/media#{slide_no}.wav", "#{Rails.root}/public/audios/#{$filename}media#{slide_no}.wav") rescue
+      $filename+'media'+slide_no.to_s+'.wav'
+
+    end
   end
 
   # Since the slides have to be manipulated to show correctly in Libre, the pptx has to be rebuild.
@@ -43,12 +61,12 @@ class Presentation
     Zip::File.open(@files.to_s, Zip::File::CREATE) { |zipfile|
       @slides.each do |f|
         if f.changed
-
           # Temporary file to store the manipulated xml
           temp_file = Tempfile.new(f.slide_file_name)
           # Store the manipulated xml inside the file
-          temp_file.write(f.slide_xml)
-          # Collect temporary files to close and unlink them later
+          temp_file.write(f.raw_xml)
+          temp_file.close
+          # Collect temporary files to unlink them later
           @temp_files << temp_file
           # Replace the original slide with the new one
           zipfile.replace(f.slide_xml_path, temp_file.path)
@@ -61,11 +79,12 @@ class Presentation
   # gem 'libreconv'
   def generate_pdf(filename)
     @destination_path = "#{Rails.root}/public/files/"+filename.remove('pptx')+'pdf'
-   # Libreconv.convert( @files.to_s, @destination_path, nil, 'pdf:writer_pdf_Export')
-    Docsplit.extract_pdf(@files.to_s)
+    Libreconv.convert( @files.to_s, @destination_path, nil, 'pdf:writer_pdf_Export')
+   # Docsplit.extract_pdf(@files.to_s)
 
     # Creates the manipulated pptx file physically
     FileUtils.mv @files.to_s, "#{Rails.root}/public/files/"+filename
+    @destination_path
   end
 
   # Generates Images out of the pptx into the root folder

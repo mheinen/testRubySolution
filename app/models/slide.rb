@@ -1,3 +1,6 @@
+require 'zip/filesystem'
+require 'nokogiri'
+
 class Slide
 
   attr_reader :presentation,
@@ -45,13 +48,23 @@ class Slide
       i += 1
       @changed = true
     end
+
+    # If the presentation contains narration there is an ugly icon. It cant be removed or set to 1x1px size
+    # That is why its position is simply set outside the slide
+    speaker_icon_position = @slide_xml.xpath('//p:pic[p:nvPicPr/p:cNvPr/a:hlinkClick/@action]/p:spPr/a:xfrm/a:off')
+    if speaker_icon_position.empty?
+    else
+      speaker_icon_position[0]['x'] = 83200880
+      speaker_icon_position[0]['y'] = 83200880
+    end
+
   end
 
 
-  # Parse every link on a slide and return them as an array
+  # Parse every link on a slide and return them as a hash
   def links
-    # Since a slide can have multiple links, we need an array
-    @links = Hash.new
+    # Since a slide can have multiple links, we need a hash
+    links = Hash.new
     # a:r elements containing a link
     links_xml = @slide_xml.xpath('//a:r[a:rPr/a:hlinkClick]')
     if links_xml.empty?
@@ -69,16 +82,37 @@ class Slide
         content_array = xml_string.to_s.split(/rId./)
         # Remove the first empty entry
         content_array.delete_at(0)
-        # Push an array into the array for the view
-        if @links.has_key?(content_array[id_array.index(link_id)])
-          @links[content_array[id_array.index(link_id)]] = @links[content_array[id_array.index(link_id)]] + ' ' + shown_text.to_s
+        # Since powerpoint sometimes splits plain text into multiple paragraphs we need to check if the link is already present
+        # If it is, we just concat the link_name string instead of storing it a second time
+        if links.has_key?(content_array[id_array.index(link_id)])
+          links[content_array[id_array.index(link_id)]] = links[content_array[id_array.index(link_id)]] + ' ' + shown_text.to_s
         else
-          @links.store(content_array[id_array.index(link_id)], shown_text.to_s)
+          links.store(content_array[id_array.index(link_id)], shown_text.to_s)
         end
-    #    @links.push([shown_text.to_s, content_array[id_array.index(link_id)]])
       end
     end
-    @links
+
+    link_on_picture_xml = @slide_xml.xpath('//p:pic[p:nvPicPr/p:cNvPr/a:hlinkClick]')
+    if link_on_picture_xml.empty?
+    else
+      link_on_picture_xml.each do |f|
+        # Gather the ID of a link to search at the relation file
+        link_id = f.xpath('string(p:nvPicPr/p:cNvPr/a:hlinkClick/@r:id)')
+        if link_id == ''
+        else
+          # Sadly the relation xml file is not well formed, we need to manipulate a string
+          xml_string = @relation_xml.xpath('//@Id | //@Target')
+          # Build an array of he single ids
+          id_array = xml_string.to_s.scan(/rId./)
+          # Build an array of the Target value
+          content_array = xml_string.to_s.split(/rId./)
+          # Remove the first empty entry
+          content_array.delete_at(0)
+          links.store(content_array[id_array.index(link_id)], 'Link on a picture')
+        end
+      end
+    end
+    links
   end
 
   def raw_xml

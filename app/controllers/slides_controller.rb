@@ -23,14 +23,17 @@ class SlidesController < ActionController::Base
     presentation.slides.each do |slide|
       # Store information inside the hash for the View
       @content.store(slide.slide_number , {slide_number: slide.slide_number, slide_title: slide.title, slide_comment: slide.comment,
-                                           slide_notes: slide.notes, links: slide.links, narration: presentation.open_narration(slide.slide_number)})
-
+                                           slide_notes: slide.notes.to_s, links: slide.links, with_narration: presentation.narration,
+                                           narration: presentation.open_narration(slide.slide_number)})
     end
 
     # Preprocessing of the pptx
     presentation.rebuild_pptx
 
-    presentation.generate_pdf($filename)
+    if params[:with_pdf]
+      @pdf = presentation.generate_pdf($filename)
+    end
+
  #   presentation.generate_images(filename)
 
 
@@ -39,6 +42,13 @@ class SlidesController < ActionController::Base
   #  presentation.close
   end
 
+  def download_pdf
+    send_file(
+        params[:pdf],
+        type: 'application/pdf',
+        disposition: 'inline'
+    )
+  end
 
   
 end

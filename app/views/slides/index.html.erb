@@ -5,6 +5,11 @@
   <p><%= form_tag('/se' ,  multipart: true ) do %>
 
         <%= file_field_tag 'pptx', :accept => 'application/vnd.openxmlformats-officedocument.presentationml.presentation' %>
+        <p>
+          <%= label_tag 'pdf erzeugen?' %>
+          <%= check_box_tag( 'with_pdf', true ) %>
+        </p>
+
         <%= submit_tag('Abschicken') %>
     <% end %>
 </div>

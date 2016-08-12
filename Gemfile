@@ -4,8 +4,7 @@ gem 'docsplit', '~> 0.7.6'
 
 
 gem 'libreconv'
-
-gem 'ruby_powerpoint'
+gem 'rubyzip', '>= 1.0.0'
 gem 'quiet_assets', group: :development
 gem "better_errors"
 gem "binding_of_caller"
