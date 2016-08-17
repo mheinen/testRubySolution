@@ -1,0 +1,6 @@
+<% @videos.each do |f| %>
+    <p>
+      <h3>Video: <%= f.id %></h3>
+      <%= video_tag(f.path, controls: true) %>
+    </p>
+<% end %>

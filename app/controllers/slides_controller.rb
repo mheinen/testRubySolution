@@ -1,8 +1,25 @@
 class SlidesController < ActionController::Base
 
+  require 'zip/filesystem'
   require 'libreconv'
 
   def index
+  end
+
+  def videos
+    @videos = Pptvideo.all
+  end
+
+
+  def plugin
+    store_file(params[:file])
+    head 200
+  end
+
+  def store_file(file)
+    path = "#{Rails.root}/public/videos/"+file.original_filename
+    FileUtils.mv file.path, path
+    Pptvideo.create(path: file.original_filename)
   end
 
   def se
@@ -41,6 +58,16 @@ class SlidesController < ActionController::Base
   #     Docsplit.extract_pdf(presentation.files.to_s)
   #  presentation.close
   end
+
+
+  def show_video
+    send_file(
+        params[:mp4],
+        type: 'video/mp4',
+        disposition: 'inline'
+    )
+  end
+
 
   def download_pdf
     send_file(

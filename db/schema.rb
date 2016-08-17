@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160720085541) do
+ActiveRecord::Schema.define(version: 20160817122217) do
+
+  create_table "pptvideos", force: :cascade do |t|
+    t.string   "path"
+    t.text     "title"
+    t.text     "transition"
+    t.text     "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "slides", force: :cascade do |t|
     t.string   "content"
